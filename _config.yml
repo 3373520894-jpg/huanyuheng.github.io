@@ -2,12 +2,15 @@ title: 幻欲恒
 description: 学习 / 科研 / 工具 / 网址库
 theme: minima
 
-# 如果你用自定义域名
-url: "https://huanyuheng.com"
+# 先用 GitHub Pages 的网址就行
+url: "https://huanyuheng.github.io"
 
-# 让顶部导航出现这些页面
+# 顶部导航显示哪些页面（按你仓库里的文件名来）
 header_pages:
+  - index.md
   - links.md
+  - about.md
+  - archive.md
 
-# 可选：让首页显示摘要
+# 首页文章显示摘要
 show_excerpts: true
