@@ -28,17 +28,26 @@
     </header>
 
     <!-- 主体：侧边栏 + 内容 -->
+<main class="page-content" aria-label="Content">
+  <div class="wrapper">
     <div class="site-shell">
       <aside class="site-sidebar">
         {% include sidebar.html %}
       </aside>
 
-      <main class="site-main">
+      <div class="site-main">
         <div class="content-wrapper">
           {{ content }}
         </div>
-      </main>
+      </div>
+
+      <aside class="site-rightbar">
+        {% include right-sidebar.html %}
+      </aside>
     </div>
+  </div>
+</main>
+
 
     <footer class="site-footer">
       <div class="content-wrapper">
