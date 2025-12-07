@@ -1,58 +1,32 @@
 <!DOCTYPE html>
-<html lang="{{ page.lang | default: site.lang | default: "zh-CN" }}">
-
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title>
-      {% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}
-    </title>
-
-    <link rel="stylesheet" href="{{ "/assets/css/style.css" | relative_url }}">
-  </head>
-
+<html lang="{{ page.lang | default: site.lang | default: "en" }}">
+  {%- include head.html -%}
   <body>
-    <!-- 顶部导航（更醒目） -->
-    <header class="site-header">
-      <div class="header-inner">
-        <a class="site-title" href="{{ "/" | relative_url }}">{{ site.title }}</a>
+    {%- include header.html -%}
 
-        <nav class="top-nav">
-          <a href="{{ "/" | relative_url }}">首页</a>
-          <a href="{{ "/links/" | relative_url }}">网址库</a>
-          <a href="{{ "/about/" | relative_url }}">关于</a>
-          <a href="{{ "/archive/" | relative_url }}">归档</a>
-        </nav>
-      </div>
-    </header>
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="site-shell">
+          <!-- 左侧固定导航 -->
+          <aside class="site-sidebar">
+            {% include sidebar.html %}
+          </aside>
 
-    <!-- 主体：侧边栏 + 内容 -->
-<main class="page-content" aria-label="Content">
-  <div class="wrapper">
-    <div class="site-shell">
-      <aside class="site-sidebar">
-        {% include sidebar.html %}
-      </aside>
+          <!-- 中间正文 -->
+          <div class="site-main">
+            <div class="content-wrapper">
+              {{ content }}
+            </div>
+          </div>
 
-      <div class="site-main">
-        <div class="content-wrapper">
-          {{ content }}
+          <!-- 右侧标签 + 工作 -->
+          <aside class="site-rightbar">
+            {% include right-sidebar.html %}
+          </aside>
         </div>
       </div>
+    </main>
 
-      <aside class="site-rightbar">
-        {% include right-sidebar.html %}
-      </aside>
-    </div>
-  </div>
-</main>
-
-
-    <footer class="site-footer">
-      <div class="content-wrapper">
-        © {{ site.time | date: "%Y" }} {{ site.title }} · 基于 GitHub Pages
-      </div>
-    </footer>
+    {%- include footer.html -%}
   </body>
 </html>
