@@ -233,3 +233,54 @@ ul.post-list > li .post-link {
   }
 
   .pos
+/* ====== links 页面：按钮风格链接 ====== */
+
+.link-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 8px 0 20px 0;
+}
+
+.link-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  color: #111827;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+  cursor: pointer;
+  white-space: nowrap;
+  min-width: 140px;
+  transition:
+    background 0.1s ease,
+    color 0.1s ease,
+    border-color 0.1s ease,
+    box-shadow 0.1s ease,
+    transform 0.08s ease;
+}
+
+.link-button:hover {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+  text-decoration: none;
+  transform: translateY(-1px);
+  box-shadow: 0 12px 30px rgba(37, 99, 235, 0.45);
+}
+
+/* 小屏幕上按钮一行一个，更好点按 */
+@media (max-width: 640px) {
+  .link-grid {
+    flex-direction: column;
+  }
+  .link-button {
+    justify-content: flex-start;
+    width: 100%;
+  }
+}
