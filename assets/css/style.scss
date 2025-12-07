@@ -232,7 +232,16 @@ ul.post-list > li .post-link {
     display: none; /* 手机上使用侧边栏即可 */
   }
 
-  .pos
+  .post, .page {
+    border-radius: 10px;
+    padding: 1.2rem 1.2rem 1.5rem;
+  }
+
+  ul.post-list > li {
+    border-radius: 10px;
+  }
+}
+
 /* ====== links 页面：按钮风格链接 ====== */
 
 .link-grid {
