@@ -1,0 +1,207 @@
+---
+layout: page
+title: 后台发布
+permalink: /admin/
+---
+
+<div class="page admin-page">
+  <h1>发布新文章</h1>
+
+  <p style="color:#6b7280;font-size:14px;">
+    第一次使用先在下面输入你的 GitHub Token，点击“保存 Token（只保存在本机）”。
+    之后就可以直接在网页里写文章，一键同步到仓库的 <code>_posts</code>。
+  </p>
+
+  <div style="margin:16px 0;padding:12px 14px;border-radius:10px;background:#f9fafb;border:1px solid #e5e7eb;">
+    <label style="font-size:14px;color:#374151;">GitHub Token</label><br>
+    <input id="token-input" type="password" style="margin-top:6px;width:100%;max-width:420px;padding:8px 10px;border-radius:8px;border:1px solid #d1d5db;">
+    <button id="save-token" style="margin-left:8px;padding:8px 14px;border-radius:999px;border:none;background:#2563eb;color:#fff;font-size:14px;cursor:pointer;">
+      保存 Token（只保存在本机）
+    </button>
+    <span id="token-status" style="margin-left:8px;font-size:13px;color:#16a34a;"></span>
+  </div>
+
+  <hr style="margin:18px 0 20px 0;border:none;border-top:1px solid #e5e7eb;">
+
+  <form id="post-form">
+    <div style="margin-bottom:12px;">
+      <label>标题（title）</label><br>
+      <input id="post-title" type="text" required
+             style="margin-top:4px;width:100%;max-width:420px;padding:8px 10px;border-radius:8px;border:1px solid #d1d5db;">
+    </div>
+
+    <div style="margin-bottom:12px;">
+      <label>日期（YYYY-MM-DD）</label><br>
+      <input id="post-date" type="text"
+             style="margin-top:4px;width:160px;padding:8px 10px;border-radius:8px;border:1px solid #d1d5db;">
+    </div>
+
+    <div style="margin-bottom:12px;">
+      <label>文件名中的 slug（可空，例如 my-first-post）</label><br>
+      <input id="post-slug" type="text"
+             style="margin-top:4px;width:100%;max-width:420px;padding:8px 10px;border-radius:8px;border:1px solid #d1d5db;">
+      <div style="font-size:12px;color:#6b7280;margin-top:2px;">
+        最终文件名会是：<code>YYYY-MM-DD-slug.md</code>，不写就自动用时间戳。
+      </div>
+    </div>
+
+    <div style="margin-bottom:12px;">
+      <label>标签（tags，用英文逗号分隔，可选）</label><br>
+      <input id="post-tags" type="text"
+             placeholder="gamma-ray, metasurface"
+             style="margin-top:4px;width:100%;max-width:420px;padding:8px 10px;border-radius:8px;border:1px solid #d1d5db;">
+    </div>
+
+    <div style="margin-bottom:12px;">
+      <label>正文内容（支持 Markdown）</label><br>
+      <textarea id="post-body" rows="18"
+                style="margin-top:4px;width:100%;max-width:100%;padding:10px 12px;border-radius:10px;border:1px solid #d1d5db;font-family:monospace,Consolas,Menlo;"></textarea>
+    </div>
+
+    <button type="submit"
+            style="padding:10px 24px;border-radius:999px;border:none;background:#16a34a;color:#fff;font-size:15px;font-weight:600;cursor:pointer;">
+      🚀 发布到 GitHub
+    </button>
+    <span id="post-status" style="margin-left:10px;font-size:14px;color:#6b7280;"></span>
+  </form>
+</div>
+
+<script>
+  // ===== 基本配置 =====
+  const OWNER = "huanyuheng";
+  const REPO  = "huanyuheng.github.io";
+  const BRANCH = "main"; // 如果以后不是 main，可以改这里
+
+  const TOKEN_KEY = "blog_admin_token";
+
+  function getToken() {
+    return localStorage.getItem(TOKEN_KEY) || "";
+  }
+
+  function setToken(token) {
+    localStorage.setItem(TOKEN_KEY, token);
+  }
+
+  // 初始化：如果本地已有 token，给个提示
+  const tokenInput  = document.getElementById("token-input");
+  const tokenStatus = document.getElementById("token-status");
+
+  if (getToken()) {
+    tokenStatus.textContent = "已在本机保存 Token";
+  }
+
+  document.getElementById("save-token").onclick = function () {
+    const t = tokenInput.value.trim();
+    if (!t) {
+      alert("请先粘贴 GitHub Token");
+      return;
+    }
+    setToken(t);
+    tokenStatus.style.color = "#16a34a";
+    tokenStatus.textContent = "Token 已保存（仅本机浏览器）";
+    tokenInput.value = "";
+  };
+
+  // 默认日期：今天
+  const dateInput = document.getElementById("post-date");
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, "0");
+  const dd = String(today.getDate()).padStart(2, "0");
+  dateInput.value = `${yyyy}-${mm}-${dd}`;
+
+  // 表单提交：调用 GitHub API 创建 _posts 里的文件
+  document.getElementById("post-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const token = getToken();
+    if (!token) {
+      alert("请先在上面保存 GitHub Token。");
+      return;
+    }
+
+    const title = document.getElementById("post-title").value.trim();
+    const date  = document.getElementById("post-date").value.trim();
+    let slug    = document.getElementById("post-slug").value.trim();
+    const tagsStr = document.getElementById("post-tags").value.trim();
+    const body  = document.getElementById("post-body").value;
+
+    if (!title || !date || !body) {
+      alert("标题 / 日期 / 正文是必填的。");
+      return;
+    }
+
+    // 生成 slug
+    if (!slug) {
+      slug = "post-" + Date.now();
+    }
+
+    const filename = `${date}-${slug}.md`;
+    const path = `_posts/${filename}`;
+
+    // tags: 用逗号分隔
+    let tagsYaml = "";
+    if (tagsStr) {
+      const arr = tagsStr.split(",").map(s => s.trim()).filter(Boolean);
+      if (arr.length > 0) {
+        tagsYaml = "tags: [" + arr.join(", ") + "]\n";
+      }
+    }
+
+    // 生成 Jekyll front-matter
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2, "0");
+    const mi = String(now.getMinutes()).padStart(2, "0");
+    const ss = String(now.getSeconds()).padStart(2, "0");
+    const dateTime = `${date} ${hh}:${mi}:${ss} +0800`;
+
+    const frontMatter =
+`---
+layout: post
+title: ${JSON.stringify(title).slice(1,-1)}
+date: ${dateTime}
+${tagsYaml}---
+`;
+
+    const fullContent = frontMatter + "\n" + body + "\n";
+
+    const b64 = btoa(unescape(encodeURIComponent(fullContent)));
+
+    const statusSpan = document.getElementById("post-status");
+    statusSpan.style.color = "#6b7280";
+    statusSpan.textContent = "正在提交到 GitHub…";
+
+    try {
+      const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${encodeURIComponent(path)}`, {
+        method: "PUT",
+        headers: {
+          "Authorization": "token " + token,
+          "Accept": "application/vnd.github+json"
+        },
+        body: JSON.stringify({
+          message: `Add post ${filename}`,
+          content: b64,
+          branch: BRANCH
+        })
+      });
+
+      const data = await res.json();
+
+      if (res.status === 201 || res.status === 200) {
+        statusSpan.style.color = "#16a34a";
+        statusSpan.textContent = "发布成功！GitHub Pages 正在重新构建。";
+        console.log("GitHub 返回：", data);
+      } else {
+        console.error("GitHub error:", data);
+        statusSpan.style.color = "#dc2626";
+        statusSpan.textContent = "提交失败，打开控制台查看错误信息。";
+        alert("提交失败：" + (data.message || res.status));
+      }
+    } catch (err) {
+      console.error(err);
+      statusSpan.style.color = "#dc2626";
+      statusSpan.textContent = "网络或其它错误。";
+      alert("网络或其它错误，请稍后再试。");
+    }
+  });
+</script>
