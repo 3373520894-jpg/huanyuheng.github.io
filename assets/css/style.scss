@@ -76,19 +76,135 @@ a:hover {
 }
 
 /* ====== 主体布局：侧边栏 + 正文 ====== */
+.site-shell {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 40px;
+  padding: 28px 18px 40px 18px;
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr) 260px; /* 左侧栏 + 正文 + 右侧栏 */
+  gap: 32px;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+/* 大屏幕时整体稍微向左挪一点，让侧边栏更靠页面左边 */
+@media (min-width: 1280px) {
+  .site-shell {
+    margin-left: 40px;
+    margin-right: auto;
+  }
+}
 
 /* 把原来的 page-content 包一层栅格布局 */
 .site-shell {
   width: 100%;
-  max-width: 1120px;
+  max-width: 1200px;
   margin: 0 auto 40px;
   padding: 28px 18px 40px 18px;
   display: grid;
-  grid-template-columns: 260px minmax(0, 1fr);
+  grid-template-columns: 260px minmax(0, 1fr) 260px; /* 左侧栏 + 正文 + 右侧栏 */
   gap: 32px;
   align-items: flex-start;
-  justify-content: flex-start;   /* 网格靠容器左边 */
+  justify-content: flex-start;
 }
+
+/* 大屏幕时整体稍微向左挪一点，让侧边栏更靠页面左边 */
+@media (min-width: 1280px) {
+  .site-shell {
+    margin-left: 40px;
+    margin-right: auto;
+  }
+}
+
+/* 大屏幕时整体稍微向左挪一点，让侧边栏更靠页面左边 */
+@media (min-width: 1280px) {
+  .site-shell {
+    margin-left: 40px;
+    margin-right: auto;
+  }
+}
+
+
+/* ====== 右侧栏：标签 + 工作 ====== */
+
+.site-rightbar {
+  position: sticky;
+  top: 76px;
+  height: fit-content;
+}
+
+.right-card {
+  border-radius: 14px;
+  background: #ffffff;
+  padding: 14px 14px 10px 14px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+  border: 1px solid #e5e7eb;
+}
+
+.right-section + .right-section {
+  border-top: 1px solid #f3f4f6;
+  margin-top: 10px;
+  padding-top: 8px;
+}
+
+.right-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b5563;
+  margin-bottom: 6px;
+}
+
+/* 标签 chips */
+.right-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag-chip {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.tag-chip:hover {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+
+/* 工作文本 */
+.right-work {
+  font-size: 13px;
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+.right-work p {
+  margin: 4px 0;
+}
+
+.right-empty {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* 小屏：隐藏右侧栏，只保留左侧 + 正文 */
+@media (max-width: 1100px) {
+  .site-shell {
+    grid-template-columns: 260px minmax(0, 1fr);
+  }
+
+  .site-rightbar {
+    display: none;
+  }
+}
+
 
 /* 大屏时整体稍微向左挪一点，让侧边栏更靠左边缘 */
 @media (min-width: 1280px) {
