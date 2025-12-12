@@ -76,14 +76,13 @@ a:hover {
 
 /* 三栏布局：左右靠边，中间内容适中 */
 .site-shell {
-  width: 100%;
-  max-width: none;
-  margin: 0;
-  padding: 24px 40px 40px 40px;       /* 距离左右边各 40px */
+  width: min(1680px, 100%);
+  margin: 0 auto;
+  padding: 24px 32px 40px 32px;       /* 稍微缩小边距，增加可视宽度 */
   box-sizing: border-box;
 
   display: grid;
-  grid-template-columns: 260px minmax(680px, 1fr) 260px;
+  grid-template-columns: 260px minmax(820px, 1fr) 260px;
   column-gap: 28px;
   align-items: flex-start;
 }
@@ -95,7 +94,7 @@ a:hover {
 }
 
 .site-main .content-wrapper {
-  max-width: 960px;
+  max-width: 1120px;
   width: 100%;
 }
 
